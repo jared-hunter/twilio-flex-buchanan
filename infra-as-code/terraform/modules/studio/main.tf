@@ -25,6 +25,12 @@ resource "twilio_studio_flows_v2" "voice" {
   definition = templatefile("../../studio/voice-flow.json", local.params)
 }
 
+resource "twilio_studio_flows_v2" "alcon" {
+  friendly_name  = "Alcon"
+  status         = "published"
+  definition = templatefile("../../studio/alcon.json", local.params)
+}
+
 locals{
   params = {
     "WORKFLOW_SID_ASSIGN_TO_ANYONE" = var.workflow_sid_assign_to_anyone

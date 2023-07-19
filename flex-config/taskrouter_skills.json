@@ -9,4 +9,10 @@
   "multivalue": false,
   "name": "template_example_sales",
   "maximum": null
+},
+{
+  "minimum": null,
+  "multivalue": false,
+  "name": "alcon",
+  "maximum": null
 }]

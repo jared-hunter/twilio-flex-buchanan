@@ -29,3 +29,11 @@ resource "twilio_taskrouter_workspaces_task_queues_v1" "internal_calls" {
   max_reserved_workers = 1
   task_order = "FIFO"
 }
+
+resource "twilio_taskrouter_workspaces_task_queues_v1" "alcon" {
+  workspace_sid  = twilio_taskrouter_workspaces_v1.flex.sid
+  friendly_name  = "Alcon"
+  target_workers = "routing.skills HAS 'alcon'"
+  max_reserved_workers = 1
+  task_order = "FIFO"
+}
