@@ -31,6 +31,12 @@ resource "twilio_studio_flows_v2" "alcon" {
   definition = templatefile("../../studio/alcon.json", local.params)
 }
 
+resource "twilio_studio_flows_v2" "inbound_call" {
+  friendly_name  = "Inbound Call"
+  status         = "published"
+  definition = templatefile("../../studio/inbound_call.json", local.params)
+}
+
 locals{
   params = {
     "WORKFLOW_SID_ASSIGN_TO_ANYONE" = var.workflow_sid_assign_to_anyone
