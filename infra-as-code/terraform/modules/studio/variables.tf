@@ -38,7 +38,7 @@ variable "workflow_sid_inbound_call" {
   type        = string
   description = "SID of the inbound call workflow"
   validation {
-    condition     = length(var.workflow_sid_internal_call) > 2 && substr(var.workflow_sid_internal_call, 0, 2) == "WW"
+    condition     = length(var.workflow_sid_inbound_call) > 2 && substr(var.workflow_sid_inbound_call, 0, 2) == "WW"
     error_message = "workflow_sid_inbound_call expected to start with \"WW\"."
   }
 }
