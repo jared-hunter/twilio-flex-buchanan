@@ -1,0 +1,18 @@
+{
+  "task_routing": {
+    "filters": [
+      {
+        "filter_friendly_name": "Alcon - English",
+        "expression": "client_name == 'Alcon' AND language == 'eng'",
+        "targets": [
+          {
+            "queue": "${QUEUE_SID_ALCON_ENGLISH}"
+          }
+        ]
+      }
+    ],
+    "default_filter": {
+      "queue": "${QUEUE_SID_ALCON}"
+    }
+  }
+}

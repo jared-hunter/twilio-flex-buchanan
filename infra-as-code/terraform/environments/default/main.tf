@@ -23,11 +23,17 @@ module "studio" {
   workflow_sid_chat_transfer = module.taskrouter.workflow_sid_chat_transfer
   workflow_sid_callback = module.taskrouter.workflow_sid_callback
   workflow_sid_internal_call = module.taskrouter.workflow_sid_internal_call
+  workflow_sid_inbound_call = module.taskrouter.workflow_sid_inbound_call
   chat_channel_sid = module.taskrouter.chat_channel_sid
   voice_channel_sid = module.taskrouter.voice_channel_sid
-  domain_custom_flex = var.SERVERLESS_DOMAIN_CUSTOM_FLEX
-  domain_schedule_manager = var.SERVERLESS_DOMAIN_SCHEDULE_MANAGER
-
+  serverless_domain = var.SERVERLESS_DOMAIN
+  serverless_sid = var.SERVERLESS_SID
+  serverless_env_sid = var.SERVERLESS_ENV_SID
+  schedule_manager_domain = var.SCHEDULE_MANAGER_DOMAIN
+  schedule_manager_sid = var.SCHEDULE_MANAGER_SID
+  schedule_manager_env_sid = var.SCHEDULE_MANAGER_ENV_SID
+  function_get_customer_by_phone_sid = var.FUNCTION_GET_CUSTOMER_BY_PHONE_SID
+  function_check_schedule_sid = var.FUNCTION_CHECK_SCHEDULE_SID
 }
 
 module "taskrouter" {

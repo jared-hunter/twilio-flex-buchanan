@@ -8,6 +8,8 @@ exports.handler = prepareStudioFunction(requiredParameters, async (context, even
   try {
     const { phoneNumber } = event;
 
+    // schedules: "6-15, Mon-Fri, CST", "7-16, Mon-Fri, CST"
+
     const database = {
       '+18442832394': {
         client_name: 'Alcon',
@@ -15,6 +17,7 @@ exports.handler = prepareStudioFunction(requiredParameters, async (context, even
         channel: 'voice', // need to confirm how to lookup clients uniquely for chat
         language: 'eng',
         priority: '50',
+        schedule: '6-15, Mon-Fri, CST',
       },
     };
 

@@ -1,57 +1,236 @@
 {
-    "description": "IVR for creating a Flex voice task",
-    "states": [
-      {
-        "name": "Trigger",
-        "type": "trigger",
-        "transitions": [
-          {
-            "event": "incomingMessage"
-          },
-          {
-            "next": "SendCallToAgent",
-            "event": "incomingCall"
-          },
-          {
-            "event": "incomingRequest"
-          }
-        ],
-        "properties": {
-          "offset": {
-            "x": 0,
-            "y": -10
-          }
+  "description": "IVR for creating a Flex voice task",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "event": "incomingMessage"
+        },
+        {
+          "next": "lookup_client",
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "event": "incomingRequest"
+        },
+        {
+          "event": "incomingParent"
         }
-      },
-      {
-        "name": "SendCallToAgent",
-        "type": "send-to-flex",
-        "transitions": [
-          {
-            "event": "callComplete"
-          },
-          {
-            "event": "failedToEnqueue"
-          },
-          {
-            "event": "callFailure"
-          }
-        ],
-        "properties": {
-          "offset": {
-            "x": 30,
-            "y": 180
-          },
-          "waitUrlMethod": "POST",
-          "waitUrl": "https://${DOMAIN_CUSTOM_FLEX}/features/callback-and-voicemail/studio/wait-experience?mode=initialize",
-          "workflow": "${WORKFLOW_SID_ASSIGN_TO_ANYONE}",
-          "channel": "${VOICE_CHANNEL_SID}",
-          "attributes": "{ \"type\": \"inbound\", \"name\": \"{{trigger.call.From}}\", \"conversations\": {\"hang_up_by\": \"Customer\"} }"
+      ],
+      "properties": {
+        "offset": {
+          "x": 0,
+          "y": -10
         }
       }
-    ],
-    "initial_state": "Trigger",
-    "flags": {
-      "allow_concurrent_calls": true
+    },
+    {
+      "name": "SendCallToAgent",
+      "type": "send-to-flex",
+      "transitions": [
+        {
+          "event": "callComplete"
+        },
+        {
+          "event": "failedToEnqueue"
+        },
+        {
+          "event": "callFailure"
+        }
+      ],
+      "properties": {
+        "waitUrl": "https://${SERVERLESS_DOMAIN}/features/callback-and-voicemail/studio/wait-experience?mode=initialize",
+        "offset": {
+          "x": 700,
+          "y": 1230
+        },
+        "workflow": "${WORKFLOW_SID_INBOUND_CALL}",
+        "channel": "${VOICE_CHANNEL_SID}",
+        "attributes": "{ \n\"type\": \"inbound\", \n\"name\": \"{{trigger.call.From}}\", \"conversations\": {\"hang_up_by\": \"Customer\"}, \n\"client_name\" : \"{{widgets.lookup_client.parsed.result.client_name}}\",\n\"itsm\" : \"{{widgets.lookup_client.parsed.result.itsm}}\",\n\"language\" : \"{{widgets.lookup_client.parsed.result.language}}\",\n\"priority\" : \"{{widgets.lookup_client.parsed.result.priority}}\"\n}",
+        "priority": "{{widgets.lookup_client.parsed.result.priority}}",
+        "waitUrlMethod": "POST"
+      }
+    },
+    {
+      "name": "lookup_client",
+      "type": "run-function",
+      "transitions": [
+        {
+          "next": "success",
+          "event": "success"
+        },
+        {
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "service_sid": "{{SERVERLESS_SID}}",
+        "environment_sid": "{{SERVERLESS_ENV_SID}}",
+        "offset": {
+          "x": 160,
+          "y": 250
+        },
+        "function_sid": "{{FUNCTION_GET_CUSTOMER_BY_PHONE_SID}}",
+        "parameters": [
+          {
+            "value": "{{trigger.call.To}}",
+            "key": "phoneNumber"
+          }
+        ],
+        "url": "https://${SERVERLESS_DOMAIN}/features/client_admin/studio/get-customer-by-phone-number"
+      }
+    },
+    {
+      "name": "success",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "next": "error_loading_client",
+          "event": "noMatch"
+        },
+        {
+          "next": "lookup_schedule",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to success",
+              "arguments": [
+                "{{widgets.lookup_client.parsed.status}}"
+              ],
+              "type": "equal_to",
+              "value": "success"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.lookup_client.parsed.status}}",
+        "offset": {
+          "x": 170,
+          "y": 490
+        }
+      }
+    },
+    {
+      "name": "lookup_schedule",
+      "type": "run-function",
+      "transitions": [
+        {
+          "next": "is_open",
+          "event": "success"
+        },
+        {
+          "next": "error_loading_schedule",
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "service_sid": "{{SCHEDULE_MANAGER_SID}}",
+        "environment_sid": "{{SCHEDULE_MANAGER_ENV_SID}}",
+        "offset": {
+          "x": 340,
+          "y": 710
+        },
+        "function_sid": "{{FUNCTION_CHECK_SCHEDULE_SID}}",
+        "parameters": [
+          {
+            "value": "{{widgets.lookup_client.parsed.result.schedule}}",
+            "key": "name"
+          }
+        ],
+        "url": "https://{{SCHEDULE_MANAGER_DOMAIN}}/check-schedule"
+      }
+    },
+    {
+      "name": "error_loading_client",
+      "type": "say-play",
+      "transitions": [
+        {
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -60,
+          "y": 710
+        },
+        "loop": 1,
+        "say": "Unable to find client"
+      }
+    },
+    {
+      "name": "is_open",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "next": "call_center_closed",
+          "event": "noMatch"
+        },
+        {
+          "next": "SendCallToAgent",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to true",
+              "arguments": [
+                "{{widgets.lookup_schedule.parsed.isOpen}}"
+              ],
+              "type": "equal_to",
+              "value": "true"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.lookup_schedule.parsed.isOpen}}",
+        "offset": {
+          "x": 360,
+          "y": 1010
+        }
+      }
+    },
+    {
+      "name": "error_loading_schedule",
+      "type": "say-play",
+      "transitions": [
+        {
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 720,
+          "y": 930
+        },
+        "loop": 1,
+        "say": "Error loading schedule"
+      }
+    },
+    {
+      "name": "call_center_closed",
+      "type": "say-play",
+      "transitions": [
+        {
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 190,
+          "y": 1240
+        },
+        "loop": 1,
+        "say": "call center currently closed"
+      }
     }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
   }
+}
