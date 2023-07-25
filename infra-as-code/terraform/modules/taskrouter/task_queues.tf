@@ -38,7 +38,7 @@ resource "twilio_taskrouter_workspaces_task_queues_v1" "alcon" {
   task_order = "FIFO"
 }
 
-resource "twilio_taskrouter_workspaces_task_queues_v1" "alcon_eng" {
+resource "twilio_taskrouter_workspaces_task_queues_v1" "alcon_english" {
   workspace_sid  = twilio_taskrouter_workspaces_v1.flex.sid
   friendly_name  = "Alcon - English"
   target_workers = "routing.skills HAS 'alcon' AND routing.skills HAS 'english'"
