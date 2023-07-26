@@ -25,7 +25,7 @@ exports.handler = prepareStudioFunction(requiredParameters, async (context, even
 
     try {
       result.result = database[phoneNumber];
-      result.status = 'success';
+      if (result.result) result.status = 'success';
     } catch (error) {
       result.status = 'not found';
     }
