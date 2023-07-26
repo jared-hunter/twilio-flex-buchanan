@@ -69,13 +69,13 @@
         }
       ],
       "properties": {
-        "service_sid": "{{SERVERLESS_SID}}",
-        "environment_sid": "{{SERVERLESS_ENV_SID}}",
+        "service_sid": "${SERVERLESS_SID}",
+        "environment_sid": "${SERVERLESS_ENV_SID}",
         "offset": {
           "x": 160,
           "y": 250
         },
-        "function_sid": "{{FUNCTION_GET_CUSTOMER_BY_PHONE_SID}}",
+        "function_sid": "${FUNCTION_GET_CUSTOMER_BY_PHONE_SID}",
         "parameters": [
           {
             "value": "{{trigger.call.To}}",
@@ -130,20 +130,20 @@
         }
       ],
       "properties": {
-        "service_sid": "{{SCHEDULE_MANAGER_SID}}",
-        "environment_sid": "{{SCHEDULE_MANAGER_ENV_SID}}",
+        "service_sid": "${SCHEDULE_MANAGER_SID}",
+        "environment_sid": "${SCHEDULE_MANAGER_ENV_SID}",
         "offset": {
           "x": 340,
           "y": 710
         },
-        "function_sid": "{{FUNCTION_CHECK_SCHEDULE_SID}}",
+        "function_sid": "${FUNCTION_CHECK_SCHEDULE_SID}",
         "parameters": [
           {
             "value": "{{widgets.lookup_client.parsed.result.schedule}}",
             "key": "name"
           }
         ],
-        "url": "https://{{SCHEDULE_MANAGER_DOMAIN}}/check-schedule"
+        "url": "https://${SCHEDULE_MANAGER_DOMAIN}/check-schedule"
       }
     },
     {
