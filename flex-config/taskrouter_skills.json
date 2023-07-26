@@ -15,4 +15,10 @@
   "multivalue": false,
   "name": "alcon",
   "maximum": null
+},
+{
+  "minimum": 0,
+  "multivalue": true,
+  "name": "english",
+  "maximum": 5
 }]
