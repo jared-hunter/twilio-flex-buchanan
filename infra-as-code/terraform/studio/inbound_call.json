@@ -94,7 +94,7 @@
           "event": "noMatch"
         },
         {
-          "next": "lookup_schedule",
+          "next": "greeting",
           "event": "match",
           "conditions": [
             {
@@ -133,8 +133,8 @@
         "service_sid": "${SCHEDULE_MANAGER_SID}",
         "environment_sid": "${SCHEDULE_MANAGER_ENV_SID}",
         "offset": {
-          "x": 340,
-          "y": 710
+          "x": 600,
+          "y": 690
         },
         "function_sid": "${FUNCTION_CHECK_SCHEDULE_SID}",
         "parameters": [
@@ -226,6 +226,33 @@
         },
         "loop": 1,
         "say": "call center currently closed"
+      }
+    },
+    {
+      "name": "greeting",
+      "type": "add-twiml-redirect",
+      "transitions": [
+        {
+          "next": "lookup_schedule",
+          "event": "return"
+        },
+        {
+          "next": "lookup_schedule",
+          "event": "timeout"
+        },
+        {
+          "next": "lookup_schedule",
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 730,
+          "y": 350
+        },
+        "method": "POST",
+        "url": "https://${SERVERLESS_DOMAIN}/features/client_admin/studio/dialogs/initial_greeting?language={{widgets.lookup_client.parsed.result.language}}&client={{widgets.lookup_client.parsed.result.client_name}}&FlowSid={{flow.flow_sid}}",
+        "timeout": "14400"
       }
     }
   ],
